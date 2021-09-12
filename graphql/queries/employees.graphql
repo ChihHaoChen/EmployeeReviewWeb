@@ -1,0 +1,6 @@
+query Employees {
+  employees {
+    id
+    name
+  }
+}
