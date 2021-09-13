@@ -1,5 +1,5 @@
 import { Grid, GridItem, Box, VStack, Container, Image, Badge } from '@chakra-ui/react'
-import { StarIcon, DeleteIcon } from '@chakra-ui/icons'
+import { StarIcon, DeleteIcon, AddIcon, } from '@chakra-ui/icons'
 import styled from 'styled-components'
 import { useRouter } from "next/router";
 import { Employee, useDeleteEmployeeMutation, useUpdateEmployeeMutation } from '../generated/graphql'
@@ -61,7 +61,22 @@ const EmployeeCard = ({ employee }: EmployeeProps) => {
         </IconWrapper>
       </NameWrapper>
       <ReviewWrapper>
-        {testText}
+        <TextFieldWrapper>
+          {testText}
+        </TextFieldWrapper>
+        <SubmitWrapper>
+          <h3>
+            {`Reviewed by `}
+          </h3>
+          <IconWrapper onClick={deleteEmployeeTest}>
+            <AddIcon
+              boxSize={20}
+            />
+          </IconWrapper>
+        </SubmitWrapper>
+        <TextFieldWrapper>
+          {testText}
+        </TextFieldWrapper>
       </ReviewWrapper>
     </CardWrapper>
   )
@@ -74,8 +89,8 @@ export default EmployeeCard
 const CardWrapper = styled.div`
   height: 400px;
   width: 600px;
-  background-color: teal;
-  color: white;
+  background-color: lightgray;
+  border: solid 2px #cc9209;
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -86,18 +101,34 @@ const CardWrapper = styled.div`
 `
 
 const NameWrapper = styled.div`
-  height: 20%;
+  height: 60px;
   width: 100%;
-  background-color: navy;
+  background-color: #f5f6f8;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
   margin-bottom: 10px;
+  border-radius: 4px;
+`
+
+const SubmitWrapper = styled.div`
+  height: 30px;
+  width: 100%;
+  background-color: orange;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 4px 0;
+  padding-left: 4px;
+  font-style: italic;
+  border-radius: 4px;
 `
 
 const IconWrapper = styled.div`
-  width: 20%;
+  width: 30px;
+  height: 30px;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -108,8 +139,16 @@ const IconWrapper = styled.div`
 const ReviewWrapper = styled.div`
   height: auto;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   overflow-y: scroll;
+`
+
+const TextFieldWrapper = styled.div`
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
 `
