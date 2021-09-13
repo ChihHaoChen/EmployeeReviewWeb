@@ -30,10 +30,17 @@ export type FieldError = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  assignReview: Review;
   createEmployee: Employee;
-  deleteEmployee: Scalars['Boolean'];
+  deleteEmployee: Employee;
   submitFeedback: ReviewResponse;
   updateEmployee?: Maybe<Employee>;
+};
+
+
+export type MutationAssignReviewArgs = {
+  reviewee: Scalars['Int'];
+  reviewer: Scalars['Int'];
 };
 
 
@@ -94,12 +101,27 @@ export type SubmitReviewInput = {
   reviewedEmployee: Scalars['Float'];
 };
 
-export type DeleteEmployeeMutionMutationVariables = Exact<{
-  id: Scalars['Int'];
+export type CreateEmployeeMutationVariables = Exact<{
+  employeeName: Scalars['String'];
 }>;
 
 
-export type DeleteEmployeeMutionMutation = { __typename?: 'Mutation', deleteEmployee: boolean };
+export type CreateEmployeeMutation = { __typename?: 'Mutation', createEmployee: { __typename?: 'Employee', id: number, name: string, createdAt: string } };
+
+export type DeleteEmployeeMutationVariables = Exact<{
+  deleteEmployeeId: Scalars['Int'];
+}>;
+
+
+export type DeleteEmployeeMutation = { __typename?: 'Mutation', deleteEmployee: { __typename?: 'Employee', id: number, name: string } };
+
+export type UpdateEmployeeMutationVariables = Exact<{
+  updateEmployeeName: Scalars['String'];
+  updateEmployeeId: Scalars['Int'];
+}>;
+
+
+export type UpdateEmployeeMutation = { __typename?: 'Mutation', updateEmployee?: Maybe<{ __typename?: 'Employee', id: number, name: string }> };
 
 export type EmployeesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -107,14 +129,42 @@ export type EmployeesQueryVariables = Exact<{ [key: string]: never; }>;
 export type EmployeesQuery = { __typename?: 'Query', employees: Array<{ __typename?: 'Employee', id: number, name: string }> };
 
 
-export const DeleteEmployeeMutionDocument = gql`
-    mutation DeleteEmployeeMution($id: Int!) {
-  deleteEmployee(id: $id)
+export const CreateEmployeeDocument = gql`
+    mutation CreateEmployee($employeeName: String!) {
+  createEmployee(name: $employeeName) {
+    id
+    name
+    createdAt
+  }
 }
     `;
 
-export function useDeleteEmployeeMutionMutation() {
-  return Urql.useMutation<DeleteEmployeeMutionMutation, DeleteEmployeeMutionMutationVariables>(DeleteEmployeeMutionDocument);
+export function useCreateEmployeeMutation() {
+  return Urql.useMutation<CreateEmployeeMutation, CreateEmployeeMutationVariables>(CreateEmployeeDocument);
+};
+export const DeleteEmployeeDocument = gql`
+    mutation DeleteEmployee($deleteEmployeeId: Int!) {
+  deleteEmployee(id: $deleteEmployeeId) {
+    id
+    name
+  }
+}
+    `;
+
+export function useDeleteEmployeeMutation() {
+  return Urql.useMutation<DeleteEmployeeMutation, DeleteEmployeeMutationVariables>(DeleteEmployeeDocument);
+};
+export const UpdateEmployeeDocument = gql`
+    mutation UpdateEmployee($updateEmployeeName: String!, $updateEmployeeId: Int!) {
+  updateEmployee(name: $updateEmployeeName, id: $updateEmployeeId) {
+    id
+    name
+  }
+}
+    `;
+
+export function useUpdateEmployeeMutation() {
+  return Urql.useMutation<UpdateEmployeeMutation, UpdateEmployeeMutationVariables>(UpdateEmployeeDocument);
 };
 export const EmployeesDocument = gql`
     query Employees {

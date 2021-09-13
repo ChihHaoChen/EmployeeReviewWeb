@@ -1,0 +1,6 @@
+mutation UpdateEmployee($updateEmployeeName: String!, $updateEmployeeId: Int!) {
+  updateEmployee(name: $updateEmployeeName, id: $updateEmployeeId) {
+    id
+    name
+  }
+}

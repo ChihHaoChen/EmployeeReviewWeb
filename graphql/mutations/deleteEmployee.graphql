@@ -1,3 +1,6 @@
-mutation DeleteEmployeeMution($id: Int!) {
-  deleteEmployee(id: $id) 
+mutation DeleteEmployee($deleteEmployeeId: Int!) {
+  deleteEmployee(id: $deleteEmployeeId) {
+    id
+    name
+  }
 }

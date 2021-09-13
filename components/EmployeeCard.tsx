@@ -2,7 +2,9 @@ import { Grid, GridItem, Box, VStack, Container, Image, Badge } from '@chakra-ui
 import { StarIcon, DeleteIcon } from '@chakra-ui/icons'
 import styled from 'styled-components'
 import { useRouter } from "next/router";
-import { Employee, useDeleteEmployeeMutionMutation } from '../generated/graphql'
+import { Employee, useDeleteEmployeeMutation, useUpdateEmployeeMutation } from '../generated/graphql'
+import EditableInput from './EditableInput'
+import { useEffect, useState } from 'react'
 
 interface EmployeeProps {
   employee: Employee
@@ -24,20 +26,34 @@ Fusce auctor leo quis elementum lobortis. Suspendisse porttitor ante non porttit
 `
 
 const EmployeeCard = ({ employee }: EmployeeProps) => {
- 
+  
   const { name, id, ...restProps } = employee
+  const [nameValue, setNameValue] = useState(name)
+  
+  useEffect(() => {
+    setNameValue(name)
+  }, [name])
 
   const router = useRouter();
-  const [deleteEmployee] = useDeleteEmployeeMutionMutation()
-
+  const [resDeleted, deleteEmployee] = useDeleteEmployeeMutation()
+  const [resUpdated, updateEmployee] = useUpdateEmployeeMutation()
+  
   const deleteEmployeeTest = () => {
-    deleteEmployee
+    deleteEmployee({ deleteEmployeeId: id })
+  }
+
+  const updateEmployeeName = (inputValue: string) => {
+    updateEmployee({ updateEmployeeName: inputValue, updateEmployeeId: id })
   }
 
   return (
     <CardWrapper>
       <NameWrapper>
-        <h2>{name}</h2>
+        <EditableInput
+          value={nameValue}
+          fieldName="name"
+          onValueChange={updateEmployeeName}
+        />
         <IconWrapper onClick={deleteEmployeeTest}>
           <DeleteIcon
             boxSize={20}
@@ -81,6 +97,7 @@ const NameWrapper = styled.div`
 `
 
 const IconWrapper = styled.div`
+  width: 20%;
   display: flex;
   flex-direction: row;
   justify-content: center;
