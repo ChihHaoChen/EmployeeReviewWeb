@@ -1,14 +1,16 @@
 import React, { FC } from 'react'
-import { Employee, useEmployeesQuery } from '../generated/graphql'
+import { Employee, useEmployeesQuery, Review, useReviewsQuery } from '../generated/graphql'
 import { Grid, GridItem, Box, VStack, Container } from '@chakra-ui/react'
 import EmployeeCard from '../components/EmployeeCard'
 import AddEmployeeCard from '../components/AddEmployeeCard'
 
-const Admin: FC = () => {
-
+const UseEmployeesFetched = () => {
   const [{ data, fetching }] = useEmployeesQuery()
-  const employees = data?.employees as Employee[]
+  return data?.employees as Employee[]
+}
 
+const Admin: FC = () => {
+  const employees = UseEmployeesFetched()
   let assigneeNames: string[] = []
   if (employees !== undefined) {
     assigneeNames = employees.map(employee => employee.name)
@@ -18,7 +20,7 @@ const Admin: FC = () => {
     <VStack>
       <AddEmployeeCard />
       {
-        (!fetching && employees !== undefined) &&
+        (employees !== undefined) &&
         <Grid templateColumns="repeat(2, 1fr)" gap={6}>
           {
             employees.map(employee =>        

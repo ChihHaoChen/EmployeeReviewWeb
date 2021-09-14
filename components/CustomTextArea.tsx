@@ -2,23 +2,28 @@ import { useEffect, useMemo, useRef, useState, ChangeEvent, KeyboardEvent, Event
 import styled from 'styled-components';
 
 interface TextAreaProps {
-  text: string;
+  text: string
   handleChange: (text: string) => void
+  editable: boolean
 }
 
-const CustomTextArea = ({ text, handleChange }: TextAreaProps) => {
-  const textAreaRef = useRef(null);
-  const [textValue, setTextValue] = useState(text);
+const CustomTextArea = ({ text, handleChange, editable }: TextAreaProps) => {
+  const textAreaRef = useRef(null)
+  const [textValue, setTextValue] = useState(text)
 
-  useMemo(() => { setTextValue(text) }, [text]);
+  useMemo(() => { setTextValue(text) }, [text])
 
   const handleTextAreaChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    const { value } = event.target;
+    const { value } = event.target
     setTextValue(value)
+
   }
 
   const onSubmit = () => {
-    handleChange(textValue);
+    if (editable) {
+      handleChange(textValue)
+      setTextValue('')
+    }
   }
     
   const handleKeyPressed: EventHandler<KeyboardEvent<HTMLTextAreaElement>> = (event) => {
@@ -28,7 +33,7 @@ const CustomTextArea = ({ text, handleChange }: TextAreaProps) => {
   }
   
   const onBlur = () => {
-    onSubmit();
+    onSubmit()
   }
 
   // useEffect(() => {

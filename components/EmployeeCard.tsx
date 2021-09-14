@@ -2,16 +2,17 @@ import React, { useEffect, useState } from 'react'
 
 import { ExternalLinkIcon, DeleteIcon, AddIcon, } from '@chakra-ui/icons'
 import styled from 'styled-components'
-import { useRouter } from "next/router";
 import {
   Employee,
+  Review,
   useDeleteEmployeeMutation,
   useUpdateEmployeeMutation,
   useAssignReviewMutation,
-  useAdminReviewMutation
+  useAdminReviewMutation,
+  useReviewsQuery
 } from '../generated/graphql'
 import EditableInput from './EditableInput'
-import CustomTextArea from './CustomTextArea';
+import CustomTextArea from './CustomTextArea'
 import { CustomSelector, AssigneeType } from './CustomSelector'
 
 interface EmployeeProps {
@@ -20,31 +21,35 @@ interface EmployeeProps {
   review?: string[],
 }
 
+const UseReviewsFetched = () => {
+  const [{ data, fetching }] = useReviewsQuery()
+  return data?.reviews as Review[]
+}
 
-const testText = `
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed iaculis mattis odio non varius. Nunc ac tristique nunc. Cras varius, ante vitae bibendum iaculis, nunc odio vehicula nulla, quis iaculis nibh diam nec ligula. Fusce gravida lectus sit amet leo lacinia, eget rutrum ex egestas. Etiam dignissim elementum viverra. Nunc condimentum eleifend risus, ut sollicitudin est placerat ut. Proin volutpat malesuada eros, et rutrum odio feugiat vel.
-
-In gravida tortor mi, nec venenatis nulla egestas eu. Ut purus eros, sodales sed nisl et, vestibulum viverra dui. Donec egestas volutpat sodales. In et sapien sem. Proin ultricies arcu et turpis luctus, ut scelerisque enim malesuada. Nam nibh nisl, consequat sed vulputate et, semper eu nulla. Maecenas sed nisl congue diam finibus varius. Etiam risus ante, venenatis euismod sapien a, bibendum ultricies justo. Integer commodo eget enim a egestas. Phasellus at risus consequat, luctus ipsum luctus, vestibulum velit. Aenean vel mi magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Integer tincidunt neque ut felis varius, at sodales turpis sodales. Vestibulum consectetur, felis vitae volutpat faucibus, sapien augue porttitor libero, eget imperdiet nisl lorem nec orci. Mauris dapibus porta tincidunt.
-
- porttitor ante non porttitor imperdiet. Donec sodales pharetra lectus eu euismod. Pellentesque ultrices rutrum leo. Morbi nec pellentesque massa. Duis ante enim, suscipit ut blandit in, volutpat a neque. Praesent nisl nibh, ullamcorper vitae erat ut, elementum malesuada metus. In vel pulvinar sapien. Praesent vel cursus nunc, ac consectetur sapien. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed hendrerit faucibus massa. 
-`
 
 const EmployeeCard = ({ employee, assignees }: EmployeeProps) => {
-  
-  const { name, id } = employee
-  const [nameValue, setNameValue] = useState<string>(name)
-  const [selectedOption, setSelectedOption] = useState<AssigneeType | []>()
-  const [reviewContext, setReviewContent] = useState<string>('')
-  
-  useEffect(() => {
-    setNameValue(name)
-  }, [name])
-
+  // GraphQL Hooks
   const [resDeleted, deleteEmployee] = useDeleteEmployeeMutation()
   const [resUpdated, updateEmployee] = useUpdateEmployeeMutation()
   const [resAssigned, assignReviewer] = useAssignReviewMutation()
   const [resAdminReview, adminReview] = useAdminReviewMutation()
+  const reviews = UseReviewsFetched()
+
+  // State Variables
+  const { name, id } = employee
+  const reviewsEmployee = (reviews !== undefined) ?
+    reviews.filter(review => review.reviewedEmployeeId === id) :
+    undefined
+
+  const [reviewsState, setReviewState] = useState<Review[] | undefined>(reviewsEmployee)
+  const [nameValue, setNameValue] = useState<string>(name)
+  const [selectedOption, setSelectedOption] = useState<AssigneeType | []>()
+  const [reviewContext, setReviewContent] = useState<string>('')
+
+  useEffect(() => {
+    setNameValue(name)
+  }, [name])
+
 
   let assigneesOptions: AssigneeType[] = []
   if (assignees !== undefined) {
@@ -69,8 +74,10 @@ const EmployeeCard = ({ employee, assignees }: EmployeeProps) => {
 
   const dispatchReview = () => {
     if (selectedOption !== undefined) {
-      assignReviewer({ assignRevieweeId: id, assignReviewerName: selectedOption.value })
-      setSelectedOption([])
+      if (selectedOption as AssigneeType) {
+        assignReviewer({ assignRevieweeId: id, assignReviewerName: (selectedOption as AssigneeType).value })
+        setSelectedOption([])
+      }
     }
   }
 
@@ -81,7 +88,8 @@ const EmployeeCard = ({ employee, assignees }: EmployeeProps) => {
         reviewedEmployeeId: id,
         rating: 5,
         feedback: changedText
-    }})
+      }
+    })
   }
   
   return (
@@ -100,22 +108,40 @@ const EmployeeCard = ({ employee, assignees }: EmployeeProps) => {
       </NameWrapper>
       <ReviewWrapper>
         <TextFieldWrapper>
-          <SubmitWrapper>
+          <HeaderWrapper>
             <h3>
-              {`Reviewed by `}
+              {`Editing Area`}
             </h3>
-            <IconWrapper onClick={removeEmployee}>
-              <AddIcon
-                boxSize={20}
-              />
-            </IconWrapper>
-          </SubmitWrapper>
+          </HeaderWrapper>
           <CustomTextArea
             text={reviewContext}
             handleChange={handleTextAreaChange}
+            editable={true}
           />
         </TextFieldWrapper>
       </ReviewWrapper>
+      {
+        (reviewsEmployee !== undefined && reviewsEmployee.length !== 0) &&
+        <ReviewWrapper>
+        { 
+          reviewsEmployee.map((review, index) =>
+            <TextFieldWrapper key={`${review.reviewedBy}-${index}`}>
+              <HeaderWrapper>
+                <h3>
+                  {`Reviewed by ${review.reviewedBy}`}
+                </h3>
+              </HeaderWrapper>
+              <CustomTextArea
+                text={review.feedback}
+                handleChange={handleTextAreaChange}
+                editable={false}
+              />
+            </TextFieldWrapper>
+          )
+        }
+        </ReviewWrapper>
+      }
+     
       <AssignReviewWrapper>
         <CustomSelector
           options={assigneesOptions}
@@ -162,7 +188,7 @@ const NameWrapper = styled.div`
   border-radius: 4px;
 `
 
-const SubmitWrapper = styled.div`
+const HeaderWrapper = styled.div`
   height: 30px;
   width: 100%;
   background-color: orange;
@@ -174,6 +200,7 @@ const SubmitWrapper = styled.div`
   padding-left: 4px;
   font-style: italic;
   border-radius: 4px;
+  padding: 4px 0;
 `
 
 const IconWrapper = styled.div`
@@ -206,6 +233,6 @@ const TextFieldWrapper = styled.div`
   justify-content: flex-start;
 `
 
-const AssignReviewWrapper = styled(SubmitWrapper)`
+const AssignReviewWrapper = styled(HeaderWrapper)`
 
 `

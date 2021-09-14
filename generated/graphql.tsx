@@ -75,16 +75,10 @@ export type Query = {
   employee?: Maybe<Employee>;
   employees: Array<Employee>;
   reviews: Array<Review>;
-  reviewsOfEmployee?: Maybe<Array<Review>>;
 };
 
 
 export type QueryEmployeeArgs = {
-  id: Scalars['Float'];
-};
-
-
-export type QueryReviewsOfEmployeeArgs = {
   id: Scalars['Float'];
 };
 
@@ -148,6 +142,13 @@ export type DeleteEmployeeMutationVariables = Exact<{
 
 export type DeleteEmployeeMutation = { __typename?: 'Mutation', deleteEmployee: { __typename?: 'Employee', id: number, name: string } };
 
+export type SubmitFeedbackMutationVariables = Exact<{
+  submitFeedbackInput: SubmitReviewInput;
+}>;
+
+
+export type SubmitFeedbackMutation = { __typename?: 'Mutation', submitFeedback: { __typename?: 'ReviewResponse', review?: Maybe<{ __typename?: 'Review', isCompleted: boolean, feedback: string, rating: number, reviewedBy: string, reviewedEmployeeId: number }> } };
+
 export type UpdateEmployeeMutationVariables = Exact<{
   updateEmployeeName: Scalars['String'];
   updateEmployeeId: Scalars['Int'];
@@ -160,6 +161,11 @@ export type EmployeesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type EmployeesQuery = { __typename?: 'Query', employees: Array<{ __typename?: 'Employee', id: number, name: string }> };
+
+export type ReviewsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ReviewsQuery = { __typename?: 'Query', reviews: Array<{ __typename?: 'Review', feedback: string, reviewedEmployeeId: number, reviewedBy: string, isCompleted: boolean, rating: number }> };
 
 
 export const AdminReviewDocument = gql`
@@ -212,6 +218,23 @@ export const DeleteEmployeeDocument = gql`
 export function useDeleteEmployeeMutation() {
   return Urql.useMutation<DeleteEmployeeMutation, DeleteEmployeeMutationVariables>(DeleteEmployeeDocument);
 };
+export const SubmitFeedbackDocument = gql`
+    mutation SubmitFeedback($submitFeedbackInput: SubmitReviewInput!) {
+  submitFeedback(submitInput: $submitFeedbackInput) {
+    review {
+      isCompleted
+      feedback
+      rating
+      reviewedBy
+      reviewedEmployeeId
+    }
+  }
+}
+    `;
+
+export function useSubmitFeedbackMutation() {
+  return Urql.useMutation<SubmitFeedbackMutation, SubmitFeedbackMutationVariables>(SubmitFeedbackDocument);
+};
 export const UpdateEmployeeDocument = gql`
     mutation UpdateEmployee($updateEmployeeName: String!, $updateEmployeeId: Int!) {
   updateEmployee(name: $updateEmployeeName, id: $updateEmployeeId) {
@@ -235,4 +258,19 @@ export const EmployeesDocument = gql`
 
 export function useEmployeesQuery(options: Omit<Urql.UseQueryArgs<EmployeesQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<EmployeesQuery>({ query: EmployeesDocument, ...options });
+};
+export const ReviewsDocument = gql`
+    query Reviews {
+  reviews {
+    feedback
+    reviewedEmployeeId
+    reviewedBy
+    isCompleted
+    rating
+  }
+}
+    `;
+
+export function useReviewsQuery(options: Omit<Urql.UseQueryArgs<ReviewsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ReviewsQuery>({ query: ReviewsDocument, ...options });
 };

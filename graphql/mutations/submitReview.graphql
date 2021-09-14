@@ -1,0 +1,11 @@
+mutation SubmitFeedback($submitFeedbackInput: SubmitReviewInput!) {
+  submitFeedback(submitInput: $submitFeedbackInput) {
+    review {
+      isCompleted
+      feedback
+      rating
+      reviewedBy
+      reviewedEmployeeId
+    }
+  }
+}

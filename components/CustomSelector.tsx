@@ -17,13 +17,8 @@ interface SelectorProps {
 const customStyles = {
   container: (provided: any, state: any) => ({
     ...provided,
-    // borderBottom: '1px dotted lightgray',
-    color: state.isSelected ? 'orange' : 'lightgray',
     width: '100%',
     border: 'none'
-    // height: '30px',
-    // backgroundColor: 'teal',
-    // display: 'block',
   }),
   control: (provided: any, state: any) => ({
     ...provided,
@@ -51,6 +46,10 @@ const customStyles = {
     backgroundColor: 'none'
   }),
   dropdownIndicator: (provided: any) => ({
+    ...provided,
+    color: 'black'
+  }),
+  clearIndicator: (provided: any) => ({
     ...provided,
     color: 'black'
   }),
