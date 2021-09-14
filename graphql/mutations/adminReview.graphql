@@ -1,0 +1,7 @@
+mutation AdminReview($adminReviewInput: ReviewAdminInput!) {
+  adminReview(reviewAdminInput: $adminReviewInput) {
+    reviewedEmployeeId
+    rating
+    isCompleted
+  }
+}

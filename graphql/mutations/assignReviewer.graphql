@@ -1,0 +1,6 @@
+mutation AssignReview($assignRevieweeId: Float!, $assignReviewerName: String!) {
+  assignReview(revieweeId: $assignRevieweeId, reviewerName: $assignReviewerName) {
+    reviewedEmployeeId
+    reviewedBy
+  }
+}

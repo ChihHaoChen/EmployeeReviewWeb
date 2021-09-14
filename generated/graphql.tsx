@@ -30,6 +30,7 @@ export type FieldError = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  adminReview: Review;
   assignReview: Review;
   createEmployee: Employee;
   deleteEmployee: Employee;
@@ -38,9 +39,14 @@ export type Mutation = {
 };
 
 
+export type MutationAdminReviewArgs = {
+  reviewAdminInput: ReviewAdminInput;
+};
+
+
 export type MutationAssignReviewArgs = {
-  reviewee: Scalars['Int'];
-  reviewer: Scalars['Int'];
+  revieweeId: Scalars['Float'];
+  reviewerName: Scalars['String'];
 };
 
 
@@ -69,10 +75,16 @@ export type Query = {
   employee?: Maybe<Employee>;
   employees: Array<Employee>;
   reviews: Array<Review>;
+  reviewsOfEmployee?: Maybe<Array<Review>>;
 };
 
 
 export type QueryEmployeeArgs = {
+  id: Scalars['Float'];
+};
+
+
+export type QueryReviewsOfEmployeeArgs = {
   id: Scalars['Float'];
 };
 
@@ -83,9 +95,15 @@ export type Review = {
   id: Scalars['Float'];
   isCompleted: Scalars['Boolean'];
   rating: Scalars['Float'];
-  reviewedBy: Scalars['Float'];
-  reviewedEmployee: Scalars['Float'];
+  reviewedBy: Scalars['String'];
+  reviewedEmployeeId: Scalars['Float'];
   updatedAt: Scalars['String'];
+};
+
+export type ReviewAdminInput = {
+  feedback: Scalars['String'];
+  rating: Scalars['Float'];
+  reviewedEmployeeId: Scalars['Float'];
 };
 
 export type ReviewResponse = {
@@ -97,9 +115,24 @@ export type ReviewResponse = {
 export type SubmitReviewInput = {
   feedback: Scalars['String'];
   rating: Scalars['Float'];
-  reviewedBy: Scalars['Float'];
-  reviewedEmployee: Scalars['Float'];
+  reviewedBy: Scalars['String'];
+  reviewedEmployeeId: Scalars['Float'];
 };
+
+export type AdminReviewMutationVariables = Exact<{
+  adminReviewInput: ReviewAdminInput;
+}>;
+
+
+export type AdminReviewMutation = { __typename?: 'Mutation', adminReview: { __typename?: 'Review', reviewedEmployeeId: number, rating: number, isCompleted: boolean } };
+
+export type AssignReviewMutationVariables = Exact<{
+  assignRevieweeId: Scalars['Float'];
+  assignReviewerName: Scalars['String'];
+}>;
+
+
+export type AssignReviewMutation = { __typename?: 'Mutation', assignReview: { __typename?: 'Review', reviewedEmployeeId: number, reviewedBy: string } };
 
 export type CreateEmployeeMutationVariables = Exact<{
   employeeName: Scalars['String'];
@@ -129,6 +162,31 @@ export type EmployeesQueryVariables = Exact<{ [key: string]: never; }>;
 export type EmployeesQuery = { __typename?: 'Query', employees: Array<{ __typename?: 'Employee', id: number, name: string }> };
 
 
+export const AdminReviewDocument = gql`
+    mutation AdminReview($adminReviewInput: ReviewAdminInput!) {
+  adminReview(reviewAdminInput: $adminReviewInput) {
+    reviewedEmployeeId
+    rating
+    isCompleted
+  }
+}
+    `;
+
+export function useAdminReviewMutation() {
+  return Urql.useMutation<AdminReviewMutation, AdminReviewMutationVariables>(AdminReviewDocument);
+};
+export const AssignReviewDocument = gql`
+    mutation AssignReview($assignRevieweeId: Float!, $assignReviewerName: String!) {
+  assignReview(revieweeId: $assignRevieweeId, reviewerName: $assignReviewerName) {
+    reviewedEmployeeId
+    reviewedBy
+  }
+}
+    `;
+
+export function useAssignReviewMutation() {
+  return Urql.useMutation<AssignReviewMutation, AssignReviewMutationVariables>(AssignReviewDocument);
+};
 export const CreateEmployeeDocument = gql`
     mutation CreateEmployee($employeeName: String!) {
   createEmployee(name: $employeeName) {

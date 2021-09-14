@@ -15,6 +15,7 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@urql/exchange-graphcache": "^4.3.3",
+    "babel-preset-next": "^1.4.0",
     "formik": "^2.2.9",
     "framer-motion": "^4",
     "graphql": "^15.5.3",
@@ -23,9 +24,9 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-is": "^17.0.2",
+    "react-select": "^4.3.1",
     "styled-components": "^5.3.1",
-    "urql": "^2.0.4",
-    "babel-preset-next": "^1.4.0"
+    "urql": "^2.0.4"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "2.2.0",
@@ -33,10 +34,11 @@
     "@graphql-codegen/typescript-operations": "2.1.4",
     "@graphql-codegen/typescript-urql": "^3.2.0",
     "@types/react": "17.0.20",
+    "@types/react-select": "^4.0.17",
     "@types/styled-components": "^5.1.13",
+    "babel-plugin-styled-components": "^1.13.2",
     "eslint": "7.32.0",
     "eslint-config-next": "11.1.2",
-    "typescript": "4.4.3",
-    "babel-plugin-styled-components": "^1.13.2"
+    "typescript": "4.4.3"
   }
 }

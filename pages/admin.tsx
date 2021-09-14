@@ -8,16 +8,21 @@ const Admin: FC = () => {
 
   const [{ data, fetching }] = useEmployeesQuery()
   const employees = data?.employees as Employee[]
+
+  let assigneeNames: string[] = []
+  if (employees !== undefined) {
+    assigneeNames = employees.map(employee => employee.name)
+  }
   
   return (
     <VStack>
       <AddEmployeeCard />
       {
         (!fetching && employees !== undefined) &&
-        <Grid templateColumns="repeat(3, 1fr)" gap={6}>
+        <Grid templateColumns="repeat(2, 1fr)" gap={6}>
           {
             employees.map(employee =>        
-              <EmployeeCard key={employee.id} employee={employee} />
+              <EmployeeCard key={employee.id} employee={employee} assignees={assigneeNames}/>
             )
           }
           
