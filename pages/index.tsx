@@ -20,16 +20,20 @@ const Home: FC = () => {
 
   return (
     <VStack>
-      <StyledButton
-        onClick={() => {
-          router.push('/admin')
-        }}
-      >
-        {`admin user`}
-      </StyledButton>
+      <CardWrapper>
+        <StyledButton
+          onClick={() => {
+            router.push('/admin')
+          }}
+        >
+          {`admin`}
+        </StyledButton>
+      </CardWrapper>      
       {
         (employees !== undefined) &&
-        <Stack direction="row" spacing={12} align="center">
+        <CardWrapper>
+          <h3>Users</h3>
+          <Stack direction="row" spacing={16} align="center">      
           {
             employees.map((employee) =>
               <StyledButton
@@ -42,8 +46,10 @@ const Home: FC = () => {
               </StyledButton>
             )
           }
-        </Stack>
+          </Stack>
+        </CardWrapper>
       }
+      
     </VStack>
 
   )
@@ -76,4 +82,18 @@ const StyledButton = styled.button`
     color: white;
     border: 1px solid #ff9100;
   }
+`
+
+const CardWrapper = styled.div`
+  height: auto;
+  width: 600px;
+  background-color: lightgray;
+  border: solid 2px #cc9209;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px;
+  padding: 4px 8px 4px 8px;
 `

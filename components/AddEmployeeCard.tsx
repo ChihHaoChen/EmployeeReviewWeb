@@ -40,27 +40,29 @@ const AddEmployeeCard = () => {
 export default AddEmployeeCard
 
 const CardWrapper = styled.div`
-  height: 60px;
+  height: auto;
   width: 600px;
-  background-color: teal;
-  color: white;
+  background-color: lightgray;
+  border: solid 2px #cc9209;
   border-radius: 4px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   margin: 12px;
-  padding: 4px 8px;
+  padding: 8px;
 `
 
 const NameWrapper = styled.div`
+  height: 30px;
   width: 100%;
-  height: 100%;
-  background-color: navy;
+  background-color: #f5f6f8;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
+  margin-bottom: 4px;
+  border-radius: 4px;
 `
 
 const IconWrapper = styled.div`

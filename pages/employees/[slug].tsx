@@ -5,6 +5,7 @@ import { Grid, VStack } from '@chakra-ui/react'
 import { Review, useReviewsQuery } from '../../generated/graphql'
 import SubmitReviewCard from '../../components/SubmitReviewCard'
 
+
 const UseReviewsFetched = () => {
   const [{ data, fetching }] = useReviewsQuery()
   return data?.reviews as Review[]
@@ -15,12 +16,15 @@ const EmployeeSubmitFeedback = () => {
   const { asPath } = useRouter()
   
   const employeeName = asPath.split('/').slice(-1)[0]
+
   const reviews = UseReviewsFetched()
-  const reviewsWaited = (reviews !== undefined) ?
+
+
+  let reviewsWaited = (reviews !== undefined) ?
     reviews.filter(review => (review.reviewedBy === employeeName) && !review.isCompleted) :
     undefined
-
   
+
   return (
     <VStack>
       <ReviewWrapper>
@@ -28,13 +32,17 @@ const EmployeeSubmitFeedback = () => {
         (reviewsWaited !== undefined && reviewsWaited.length !== 0) ?
         <Grid templateColumns="repeat(2, 1fr)" gap={6}>
         {
-          reviewsWaited.map((review, index) =>
-            <SubmitReviewCard
-              key={index}
-              review={review}
-              reviewedName={review.reviewedEmployee.name}
-            />
-          )
+          reviewsWaited.map((review, index) => {
+            if (!review.isCompleted) {
+              return (
+                <SubmitReviewCard
+                  key={index}
+                  review={review}
+                  reviewedName={review.reviewedEmployee.name}
+                />  
+              )
+            }
+          })
         }
         </Grid> :
       <NotificationMessage />

@@ -71,6 +71,7 @@ const HeaderWrapper = styled.div`
 const TextFieldWrapper = styled.div`
   height: 100%;
   width: 100%;
+  max-height: 400px;
   display: flex;
   flex-direction: column;
   align-items: center;

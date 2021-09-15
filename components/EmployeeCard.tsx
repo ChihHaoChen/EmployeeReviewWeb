@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { CarouselProvider, Slider, Slide, ButtonBack, ButtonNext } from 'pure-react-carousel';
-import 'pure-react-carousel/dist/react-carousel.es.css';
-import { ExternalLinkIcon, DeleteIcon, EditIcon, CheckCircleIcon } from '@chakra-ui/icons'
+import { ExternalLinkIcon, DeleteIcon } from '@chakra-ui/icons'
 import styled from 'styled-components'
 import {
   Employee,
@@ -9,7 +7,7 @@ import {
   useDeleteEmployeeMutation,
   useUpdateEmployeeMutation,
   useAssignReviewMutation,
-  useAdminReviewMutation,
+  useDeleteReviewMutation,
   useReviewsQuery
 } from '../generated/graphql'
 import EditableInput from './EditableInput'
@@ -35,7 +33,7 @@ const EmployeeCard = ({ employee, assignees }: EmployeeProps) => {
   const [resDeleted, deleteEmployee] = useDeleteEmployeeMutation()
   const [resUpdated, updateEmployee] = useUpdateEmployeeMutation()
   const [resAssigned, assignReviewer] = useAssignReviewMutation()
-  const [resAdminReview, adminReview] = useAdminReviewMutation()
+  const [resDeletedReview, deleteReview] = useDeleteReviewMutation()
   const reviews = UseReviewsFetched()
 
   // State Variables
@@ -44,10 +42,10 @@ const EmployeeCard = ({ employee, assignees }: EmployeeProps) => {
     reviews.filter(review => review.reviewedEmployeeId === id) :
     undefined
 
-  const [reviewsState, setReviewState] = useState<Review[] | undefined>(reviewsEmployee)
+  // const [reviewsState, setReviewState] = useState<Review[] | undefined>(reviewsEmployee)
   const [nameValue, setNameValue] = useState<string>(name)
   const [selectedOption, setSelectedOption] = useState<AssigneeType | []>()
-  const [reviewContext, setReviewContent] = useState<string>('')
+  const [_, setReviewContent] = useState<string>('')
 
   useEffect(() => {
     setNameValue(name)
@@ -59,11 +57,13 @@ const EmployeeCard = ({ employee, assignees }: EmployeeProps) => {
     assignees.filter(assigneeName => assigneeName !== name).forEach(nameOption => {
       assigneesOptions.push({ value: nameOption, label: nameOption})
     })
-
   }
   
   
   const removeEmployee = () => {
+    // Before removing a specific employee, all the reviews related to him/her have to be removed first because of foreign-key constraints
+    deleteReview({ deleteReviewOfEmployeeId: id })
+    // after the reviews deleted, then the employee can be safely deleted.
     deleteEmployee({ deleteEmployeeId: id })
   }
 
@@ -76,8 +76,8 @@ const EmployeeCard = ({ employee, assignees }: EmployeeProps) => {
   }
 
   const dispatchReview = () => {
-    const isPreviousReviewExisted =
-      reviews.filter(review => (review.reviewedBy === name && !review.isCompleted))
+    // const isPreviousReviewExisted =
+    //   reviews.filter(review => (review.reviewedBy === name && !review.isCompleted))
     if (selectedOption !== undefined) {
       if (selectedOption as AssigneeType) {
         assignReviewer({ assignRevieweeId: id, assignReviewerName: (selectedOption as AssigneeType).value })
@@ -90,15 +90,6 @@ const EmployeeCard = ({ employee, assignees }: EmployeeProps) => {
     setReviewContent(changedText)
   }
   
-  const dispatchAdminReview = () => {
-    adminReview({
-      adminReviewInput: {
-        reviewedEmployeeId: id,
-        rating: 5,
-        feedback: reviewContext
-      }
-    })
-  }
   
   return (
     <CardWrapper>
@@ -115,24 +106,24 @@ const EmployeeCard = ({ employee, assignees }: EmployeeProps) => {
         </IconWrapper>
       </NameWrapper>
       <ReviewWrapper>
-        <AdminInputCard id={id} /> 
-      </ReviewWrapper> 
+        <AdminInputCard id={id}/>
+      </ReviewWrapper>
       {
         (reviewsEmployee !== undefined && reviewsEmployee.length !== 0) &&
         <ReviewWrapper>
-        { 
-          reviewsEmployee.map((review, index) =>
-            <EmployReviewCard
-              key={`${review.reviewedBy}-${index}`}
-              review={review}
-              handleTextAreaChange={handleTextAreaChange}
-            />
-          )
-        }
+          { 
+            reviewsEmployee.map((review, index) =>
+              <EmployReviewCard
+                key={`${review.reviewedBy}-${index}`}
+                review={review}
+                handleTextAreaChange={handleTextAreaChange}
+              />
+            )
+          }
         </ReviewWrapper>
       }
      
-      <AssignReviewWrapper>
+      <OperationWrapper>
         <CustomSelector
           options={assigneesOptions}
           value={selectedOption}
@@ -143,7 +134,7 @@ const EmployeeCard = ({ employee, assignees }: EmployeeProps) => {
             boxSize={20}
           />
         </IconWrapper>
-      </AssignReviewWrapper>
+      </OperationWrapper>
     </CardWrapper>
   )
 }
@@ -152,8 +143,16 @@ const EmployeeCard = ({ employee, assignees }: EmployeeProps) => {
 export default EmployeeCard
 
 
+const ReviewWrapper = styled.div`
+  height: 100%;
+  width: 100%;
+  display: block;
+  overflow-y: auto;
+  margin: 4px 0;
+`
+
 const CardWrapper = styled.div`
-  height: 400px;
+  height: 600px;
   width: 600px;
   background-color: lightgray;
   border: solid 2px #cc9209;
@@ -167,7 +166,7 @@ const CardWrapper = styled.div`
 `
 
 const NameWrapper = styled.div`
-  height: 60px;
+  height: 30px;
   width: 100%;
   background-color: #f5f6f8;
   display: flex;
@@ -178,7 +177,7 @@ const NameWrapper = styled.div`
   border-radius: 4px;
 `
 
-const HeaderWrapper = styled.div`
+const OperationWrapper = styled.div`
   height: 30px;
   width: 100%;
   background-color: orange;
@@ -201,19 +200,4 @@ const IconWrapper = styled.div`
   justify-content: center;
   align-items: center;
   cursor: pointer;
-`
-
-const ReviewWrapper = styled.div`
-  height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  overflow-y: scroll;
-  margin: 4px 0;
-`
-
-const AssignReviewWrapper = styled(HeaderWrapper)`
-
 `

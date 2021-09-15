@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
-import { Employee, useEmployeesQuery, Review, useReviewsQuery } from '../generated/graphql'
-import { Grid, GridItem, Box, VStack, Container } from '@chakra-ui/react'
+import { Employee, useEmployeesQuery } from '../generated/graphql'
+import { Grid, VStack } from '@chakra-ui/react'
 import EmployeeCard from '../components/EmployeeCard'
 import AddEmployeeCard from '../components/AddEmployeeCard'
 

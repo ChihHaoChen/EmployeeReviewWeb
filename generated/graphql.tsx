@@ -34,6 +34,7 @@ export type Mutation = {
   assignReview: Review;
   createEmployee: Employee;
   deleteEmployee: Employee;
+  deleteReview: Review;
   submitFeedback: ReviewResponse;
   updateEmployee?: Maybe<Employee>;
 };
@@ -57,6 +58,11 @@ export type MutationCreateEmployeeArgs = {
 
 export type MutationDeleteEmployeeArgs = {
   id: Scalars['Int'];
+};
+
+
+export type MutationDeleteReviewArgs = {
+  reviewedEmployeeId: Scalars['Float'];
 };
 
 
@@ -143,6 +149,13 @@ export type DeleteEmployeeMutationVariables = Exact<{
 
 export type DeleteEmployeeMutation = { __typename?: 'Mutation', deleteEmployee: { __typename?: 'Employee', id: number, name: string } };
 
+export type DeleteReviewMutationVariables = Exact<{
+  deleteReviewOfEmployeeId: Scalars['Float'];
+}>;
+
+
+export type DeleteReviewMutation = { __typename?: 'Mutation', deleteReview: { __typename?: 'Review', id: number } };
+
 export type SubmitFeedbackMutationVariables = Exact<{
   submitFeedbackInput: SubmitReviewInput;
 }>;
@@ -218,6 +231,17 @@ export const DeleteEmployeeDocument = gql`
 
 export function useDeleteEmployeeMutation() {
   return Urql.useMutation<DeleteEmployeeMutation, DeleteEmployeeMutationVariables>(DeleteEmployeeDocument);
+};
+export const DeleteReviewDocument = gql`
+    mutation DeleteReview($deleteReviewOfEmployeeId: Float!) {
+  deleteReview(reviewedEmployeeId: $deleteReviewOfEmployeeId) {
+    id
+  }
+}
+    `;
+
+export function useDeleteReviewMutation() {
+  return Urql.useMutation<DeleteReviewMutation, DeleteReviewMutationVariables>(DeleteReviewDocument);
 };
 export const SubmitFeedbackDocument = gql`
     mutation SubmitFeedback($submitFeedbackInput: SubmitReviewInput!) {

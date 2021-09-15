@@ -23,18 +23,23 @@ const SubmitReviewCard = ({ review, reviewedName }: SubmitReviewProps) => {
       reviewedBy: review.reviewedBy,
       reviewedEmployeeId: review.reviewedEmployeeId,
     }
-    submitFeedback({ submitFeedbackInput: SubmitReviewInput})
-
+    submitFeedback({ submitFeedbackInput: SubmitReviewInput })
   }
+
 
   return (
     <CardWrapper>
       <ReviewWrapper>
         <TextFieldWrapper>
           <HeaderWrapper>
-            <h3>
-              {`Editing Area to review ${reviewedName}`}
-            </h3>
+            <TitleWrapper>
+              <h3>
+                {`Editing Area to review: `}
+              </h3>
+              <StyledRevieweeName>
+                {reviewedName}
+              </StyledRevieweeName>
+            </TitleWrapper>    
             <IconWrapper onClick={dispatchSubmit}>
               <EditIcon boxSize={20}/>
             </IconWrapper>
@@ -54,7 +59,7 @@ export default SubmitReviewCard
 
 
 const CardWrapper = styled.div`
-  height: 400px;
+  height: auto;
   width: 600px;
   background-color: lightgray;
   border: solid 2px #cc9209;
@@ -64,7 +69,7 @@ const CardWrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   margin: 12px;
-  padding: 8px 8px 4px 8px;
+  padding: 4px 8px 4px 8px;
 `
 
 const ReviewWrapper = styled.div`
@@ -110,4 +115,17 @@ const IconWrapper = styled.div`
   justify-content: center;
   align-items: center;
   cursor: pointer;
+`
+
+const TitleWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+`
+
+const StyledRevieweeName = styled.p`
+  font-size: 20px;
+  margin-left: 16px;
+  color: navy;
 `

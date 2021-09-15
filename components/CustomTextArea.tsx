@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, ChangeEvent, KeyboardEvent, EventHandler } from 'react'
+import { useMemo, useRef, useState, ChangeEvent, KeyboardEvent, EventHandler } from 'react'
 import styled from 'styled-components';
 
 interface TextAreaProps {
@@ -36,13 +36,6 @@ const CustomTextArea = ({ text, handleChange, editable }: TextAreaProps) => {
     onSubmit()
   }
 
-  // useEffect(() => {
-  //   if (!textAreaRef && (textAreaRef.current)) {
-  //     textAreaRef.current.style.height = '0px';
-  //     textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
-  //   }
-  // }, [textValue])
-
   return (
     <StyledTextArea 
       ref={textAreaRef}
@@ -61,7 +54,7 @@ const StyledTextArea = styled.textarea`
 resize: none;
 overflow: scroll;
 width: 100%;
-height: 100%;
+height: 210px;
 min-height: 23px;
 padding-left: 2px;
 padding-top: 2px;
