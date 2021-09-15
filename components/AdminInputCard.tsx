@@ -1,46 +1,56 @@
 import styled from 'styled-components'
-import { Review } from '../generated/graphql'
 import CustomTextArea from './CustomTextArea'
-import { CheckCircleIcon } from '@chakra-ui/icons'
+import { EditIcon } from '@chakra-ui/icons'
+import { useState } from 'react'
+import {
+  useAdminReviewMutation,
+} from '../generated/graphql'
 
-interface EmployReviewCardProps {
-  review: Review
-  handleTextAreaChange: (text: string) => void
+
+interface AdminInputCardProps {
+  id: number
 }
 
-const EmployReviewCard = ({ review, handleTextAreaChange }: EmployReviewCardProps) => {
-  const { reviewedBy, isCompleted, feedback } = review
+const AdminInputCard = ({ id }: AdminInputCardProps) => {
+  // GraphQL Hooks
+  const [resAdminReview, adminReview] = useAdminReviewMutation()
+  // Local State
+  const [reviewContext, setReviewContent] = useState<string>('')
+  
+  const handleTextAreaChange = (changedText: string) => {
+    setReviewContent(changedText)
+  }
 
+  const dispatchAdminReview = () => {
+    adminReview({
+      adminReviewInput: {
+        reviewedEmployeeId: id,
+        rating: 5,
+        feedback: reviewContext
+      }
+    })
+  }
+  
   return (
     <TextFieldWrapper>
       <HeaderWrapper>
         <h3>
-          {`Reviewed by ${reviewedBy}`}
+          {`Editing Area`}
         </h3>
-        <IconWrapper>
-          {
-            isCompleted ?
-            <CheckCircleIcon
-              boxSize={20}
-              color='#0e6b03'
-            />:
-            <CheckCircleIcon
-              boxSize={20}
-              color='#e75480'
-            />
-          }
+        <IconWrapper onClick={dispatchAdminReview}>
+          <EditIcon boxSize={20}/>
         </IconWrapper>
       </HeaderWrapper>
       <CustomTextArea
-        text={feedback}
+        text={reviewContext}
         handleChange={handleTextAreaChange}
-        editable={false}
+        editable={true}
       />
     </TextFieldWrapper>
   )
 }
 
-export default EmployReviewCard
+export default AdminInputCard
 
 
 const HeaderWrapper = styled.div`

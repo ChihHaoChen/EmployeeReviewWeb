@@ -90,6 +90,7 @@ export type Review = {
   isCompleted: Scalars['Boolean'];
   rating: Scalars['Float'];
   reviewedBy: Scalars['String'];
+  reviewedEmployee: Employee;
   reviewedEmployeeId: Scalars['Float'];
   updatedAt: Scalars['String'];
 };
@@ -165,7 +166,7 @@ export type EmployeesQuery = { __typename?: 'Query', employees: Array<{ __typena
 export type ReviewsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ReviewsQuery = { __typename?: 'Query', reviews: Array<{ __typename?: 'Review', feedback: string, reviewedEmployeeId: number, reviewedBy: string, isCompleted: boolean, rating: number }> };
+export type ReviewsQuery = { __typename?: 'Query', reviews: Array<{ __typename?: 'Review', id: number, reviewedBy: string, reviewedEmployeeId: number, isCompleted: boolean, feedback: string, rating: number, reviewedEmployee: { __typename?: 'Employee', id: number, name: string } }> };
 
 
 export const AdminReviewDocument = gql`
@@ -262,11 +263,16 @@ export function useEmployeesQuery(options: Omit<Urql.UseQueryArgs<EmployeesQuery
 export const ReviewsDocument = gql`
     query Reviews {
   reviews {
-    feedback
-    reviewedEmployeeId
+    id
     reviewedBy
+    reviewedEmployeeId
     isCompleted
+    feedback
     rating
+    reviewedEmployee {
+      id
+      name
+    }
   }
 }
     `;

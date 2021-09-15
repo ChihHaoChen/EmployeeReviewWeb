@@ -1,10 +1,9 @@
 
 import { useRouter } from 'next/router'
-import { useState } from 'react'
 import styled from 'styled-components'
-import CustomTextArea from '../../components/CustomTextArea'
-import { Grid, GridItem, Box, VStack, Container } from '@chakra-ui/react'
-import { Review, useSubmitFeedbackMutation, useReviewsQuery } from '../../generated/graphql'
+import { Grid, VStack } from '@chakra-ui/react'
+import { Review, useReviewsQuery } from '../../generated/graphql'
+import SubmitReviewCard from '../../components/SubmitReviewCard'
 
 const UseReviewsFetched = () => {
   const [{ data, fetching }] = useReviewsQuery()
@@ -20,21 +19,25 @@ const EmployeeSubmitFeedback = () => {
   const reviewsWaited = (reviews !== undefined) ?
     reviews.filter(review => (review.reviewedBy === employeeName) && !review.isCompleted) :
     undefined
-  console.log('reviews waited =>', reviewsWaited)
 
   
   return (
     <VStack>
       <ReviewWrapper>
       {
-        (reviewsWaited !== undefined) &&
+        (reviewsWaited !== undefined && reviewsWaited.length !== 0) ?
         <Grid templateColumns="repeat(2, 1fr)" gap={6}>
         {
           reviewsWaited.map((review, index) =>
-           
+            <SubmitReviewCard
+              key={index}
+              review={review}
+              reviewedName={review.reviewedEmployee.name}
+            />
           )
         }
-        </Grid>
+        </Grid> :
+      <NotificationMessage />
       }
       </ReviewWrapper>
     </VStack>
@@ -54,3 +57,30 @@ const ReviewWrapper = styled.div`
   overflow-y: scroll;
   margin: 4px 0;
 `
+
+const NotificationWrapper = styled.div`
+  height: 30px;
+  width: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-color: orange;
+  padding: 8px;
+`
+
+const StyledMessage = styled.p`
+  font-size: 16px;
+  color: white;
+  font-weight: bold;
+`
+
+const NotificationMessage = () => (
+  <NotificationWrapper>
+    <span>
+      <StyledMessage>
+      Currently you do not have reviews assigned to you.
+      </StyledMessage>
+    </span>
+  </NotificationWrapper>
+)  

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-
-import { ExternalLinkIcon, DeleteIcon, AddIcon, } from '@chakra-ui/icons'
+import { CarouselProvider, Slider, Slide, ButtonBack, ButtonNext } from 'pure-react-carousel';
+import 'pure-react-carousel/dist/react-carousel.es.css';
+import { ExternalLinkIcon, DeleteIcon, EditIcon, CheckCircleIcon } from '@chakra-ui/icons'
 import styled from 'styled-components'
 import {
   Employee,
@@ -14,6 +15,8 @@ import {
 import EditableInput from './EditableInput'
 import CustomTextArea from './CustomTextArea'
 import { CustomSelector, AssigneeType } from './CustomSelector'
+import EmployReviewCard from './EmployReviewCard'
+import AdminInputCard from './AdminInputCard'
 
 interface EmployeeProps {
   employee: Employee
@@ -73,6 +76,8 @@ const EmployeeCard = ({ employee, assignees }: EmployeeProps) => {
   }
 
   const dispatchReview = () => {
+    const isPreviousReviewExisted =
+      reviews.filter(review => (review.reviewedBy === name && !review.isCompleted))
     if (selectedOption !== undefined) {
       if (selectedOption as AssigneeType) {
         assignReviewer({ assignRevieweeId: id, assignReviewerName: (selectedOption as AssigneeType).value })
@@ -83,11 +88,14 @@ const EmployeeCard = ({ employee, assignees }: EmployeeProps) => {
 
   const handleTextAreaChange = (changedText: string) => {
     setReviewContent(changedText)
+  }
+  
+  const dispatchAdminReview = () => {
     adminReview({
       adminReviewInput: {
         reviewedEmployeeId: id,
         rating: 5,
-        feedback: changedText
+        feedback: reviewContext
       }
     })
   }
@@ -107,36 +115,18 @@ const EmployeeCard = ({ employee, assignees }: EmployeeProps) => {
         </IconWrapper>
       </NameWrapper>
       <ReviewWrapper>
-        <TextFieldWrapper>
-          <HeaderWrapper>
-            <h3>
-              {`Editing Area`}
-            </h3>
-          </HeaderWrapper>
-          <CustomTextArea
-            text={reviewContext}
-            handleChange={handleTextAreaChange}
-            editable={true}
-          />
-        </TextFieldWrapper>
-      </ReviewWrapper>
+        <AdminInputCard id={id} /> 
+      </ReviewWrapper> 
       {
         (reviewsEmployee !== undefined && reviewsEmployee.length !== 0) &&
         <ReviewWrapper>
         { 
           reviewsEmployee.map((review, index) =>
-            <TextFieldWrapper key={`${review.reviewedBy}-${index}`}>
-              <HeaderWrapper>
-                <h3>
-                  {`Reviewed by ${review.reviewedBy}`}
-                </h3>
-              </HeaderWrapper>
-              <CustomTextArea
-                text={review.feedback}
-                handleChange={handleTextAreaChange}
-                editable={false}
-              />
-            </TextFieldWrapper>
+            <EmployReviewCard
+              key={`${review.reviewedBy}-${index}`}
+              review={review}
+              handleTextAreaChange={handleTextAreaChange}
+            />
           )
         }
         </ReviewWrapper>
@@ -200,7 +190,7 @@ const HeaderWrapper = styled.div`
   padding-left: 4px;
   font-style: italic;
   border-radius: 4px;
-  padding: 4px 0;
+  padding: 0 4px;
 `
 
 const IconWrapper = styled.div`
@@ -222,15 +212,6 @@ const ReviewWrapper = styled.div`
   align-items: center;
   overflow-y: scroll;
   margin: 4px 0;
-`
-
-const TextFieldWrapper = styled.div`
-  height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
 `
 
 const AssignReviewWrapper = styled(HeaderWrapper)`

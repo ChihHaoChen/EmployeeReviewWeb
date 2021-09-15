@@ -1,9 +1,14 @@
 query Reviews {
     reviews {
-    feedback
-    reviewedEmployeeId
+    id
     reviewedBy
+    reviewedEmployeeId
     isCompleted
+    feedback
     rating
+    reviewedEmployee {
+      id
+      name
+    }
   }
 }
