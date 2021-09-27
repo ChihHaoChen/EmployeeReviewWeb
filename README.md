@@ -1,34 +1,45 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Brief Report about The Challenge
 
-## Getting Started
+## Features and database schema
 
-First, run the development server:
+![challenge.svg](BriefReport/challenge.svg)
 
-```bash
-npm run dev
-# or
-yarn dev
+## Client Side (http://localhost:3000)
+
+### Assumptions
+
+1. No global state management, therefore, whenever database is updated through the developed server, the client side has to be refreshed to fetch the most updated data.
+2. 3 pages for the user flow:
+    1.  one page for user to enter into the admin mode and employee mode;
+
+        ![Screen Shot 2021-09-16 at 9.57.06 AM.png](BriefReport/Screen_Shot_2021-09-16_at_9.57.06_AM.png)
+
+    2. one page to allow the admin to add/remove/update/view employees, and also admin can assign other employees for peer reviews;
+
+        ![Screen Shot 2021-09-16 at 9.58.29 AM.png](BriefReport/Screen_Shot_2021-09-16_at_9.58.29_AM.png)
+
+    3. one page to allow employees to submit their peer reviews, and to show message if no assigned reviews left.
+        - No reviews assigned or all assigned reviews are submitted already.
+
+        ![Screen Shot 2021-09-16 at 10.10.59 AM.png](BriefReport/Screen_Shot_2021-09-16_at_10.10.59_AM.png)
+
+        - With assigned reviews not submitted yet.
+
+        ![Screen Shot 2021-09-16 at 10.12.40 AM.png](BriefReport/Screen_Shot_2021-09-16_at_10.12.40_AM.png)
+
+3. Styles are mainly focused in the UI components for primary function, and limited styling due to time limit.
+4. Although Next.js is employed in this challenge project, no SSR has been implemented yet.
+
+### Client Side (/web)
+
+```jsx
+yarn install // To install the used libraries
+yarn dev // To start the client
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Todo Item for Further Improvements (/web)
+- Refactoring is necessary for cleaner code, better readability, and modularization of code;
+- Global state statement or more modern state management libraries can be used to have a responsive frontend;
+- Urql ([https://formidable.com/open-source/urql/](https://formidable.com/open-source/urql/)) and its related libraries can be further studied and developed to allow SSR under the Next.js framework;
+- Better UI components and UI design, for instance, the employee card container to view the feedback can be collapsed or design in a carousel style for cleaner UI. 
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
